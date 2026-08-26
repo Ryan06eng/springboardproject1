@@ -1,4 +1,4 @@
-package Exception;
+package com.example.springboardproject1.Exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

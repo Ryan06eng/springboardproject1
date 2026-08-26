@@ -50,8 +50,7 @@ public class BookService {
         if (response != null) {
 
             Map<String, Object> bookData =
-                    (Map<String, Object>)
-                            response.get("ISBN:" + bookDTO.getIsbn());
+                    (Map<String, Object>) response.get("ISBN:" + bookDTO.getIsbn());
 
             if (bookData != null && bookData.get("authors") != null) {
 
