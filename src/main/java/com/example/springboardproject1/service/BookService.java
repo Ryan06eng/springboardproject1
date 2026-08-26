@@ -16,6 +16,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import com.example.springboardproject1.Exception.AuthorNotFoundException;
+
 @Service
 public class BookService {
 
@@ -62,12 +64,12 @@ public class BookService {
                 }
             }
         }
-
         if (authorName == null) {
-            throw new RuntimeException(
+            throw new AuthorNotFoundException(
                     "Author information was not found for this ISBN"
             );
         }
+
         Optional<Author> existingAuthor = authorRepository.findByName(authorName);
 
         Author author;
