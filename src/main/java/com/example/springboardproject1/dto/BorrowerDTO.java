@@ -1,6 +1,5 @@
 package com.example.springboardproject1.dto;
 
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
 public class BorrowerDTO {
@@ -8,8 +7,7 @@ public class BorrowerDTO {
     @NotBlank(message = "Name is required")
     private String name;
 
-    @NotBlank(message = "Email is required")
-    @Email(message = "Email must be valid")
+    @NotBlank(message = "Contact information is required")
     private String contactInformation;
 
     public BorrowerDTO() {
