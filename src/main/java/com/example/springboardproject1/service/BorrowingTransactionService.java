@@ -54,7 +54,7 @@ public class BorrowingTransactionService {
                 );
         // Count borrower's transactions
         long transactionCount =
-                transactionRepository.countByBorrowerId(borrowerId);
+                transactionRepository.countByBorrowerIdAndReturnDateIsNull(borrowerId);
 
         // Check transaction limit
         if (transactionCount >= transactionLimit) {

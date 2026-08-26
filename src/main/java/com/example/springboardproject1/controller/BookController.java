@@ -1,6 +1,7 @@
 package com.example.springboardproject1.controller;
 
 import com.example.springboardproject1.dto.BookDTO;
+import com.example.springboardproject1.dto.BookResponse;
 import com.example.springboardproject1.model.Book;
 import com.example.springboardproject1.model.BookCategory;
 import com.example.springboardproject1.service.BookService;
@@ -13,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/books")
@@ -24,58 +26,71 @@ public class BookController {
         this.bookService = bookService;
     }
 
+    // Convert Book entity to BookResponse DTO
+    private BookResponse toResponse(Book book) {
+        return new BookResponse(
+                book.getId(),
+                book.getTitle(),
+                book.getIsbn(),
+                book.getCategory(),
+                book.getAuthor() != null ? book.getAuthor().getName() : null,
+                book.isAvailable()
+        );
+    }
+
     // CREATE
     @PostMapping
-    public ResponseEntity<Book> createBook(
+    public ResponseEntity<BookResponse> createBook(
             @Valid @RequestBody BookDTO bookDTO) {
 
-        return ResponseEntity.ok(
-                bookService.createBook(bookDTO)
-        );
+        Book book = bookService.createBook(bookDTO);
+
+        return ResponseEntity.ok(toResponse(book));
     }
 
     // READ - all books
     @GetMapping
-    public List<Book> getAllBooks() {
-        return bookService.getAllBooks();
+    public List<BookResponse> getAllBooks() {
+
+        return bookService.getAllBooks()
+                .stream()
+                .map(this::toResponse)
+                .collect(Collectors.toList());
     }
 
     // READ - one book
     @GetMapping("/{id}")
-    public ResponseEntity<Book> getBookById(@PathVariable Long id) {
+    public ResponseEntity<BookResponse> getBookById(
+            @PathVariable Long id) {
 
         return bookService.getBookById(id)
+                .map(this::toResponse)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     // UPDATE
     @PutMapping("/{id}")
-    public ResponseEntity<Book> updateBook(
+    public ResponseEntity<BookResponse> updateBook(
             @PathVariable Long id,
             @Valid @RequestBody BookDTO bookDTO) {
 
-        try {
+        Book bookDetails = new Book();
 
-            Book bookDetails = new Book();
+        bookDetails.setTitle(bookDTO.getTitle());
+        bookDetails.setIsbn(bookDTO.getIsbn());
+        bookDetails.setCategory(bookDTO.getCategory());
+        bookDetails.setAvailable(bookDTO.isAvailable());
 
-            bookDetails.setTitle(bookDTO.getTitle());
-            bookDetails.setIsbn(bookDTO.getIsbn());
-            bookDetails.setCategory(bookDTO.getCategory());
-            bookDetails.setAvailable(bookDTO.isAvailable());
+        Book updatedBook = bookService.updateBook(id, bookDetails);
 
-            return ResponseEntity.ok(
-                    bookService.updateBook(id, bookDetails)
-            );
-
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
+        return ResponseEntity.ok(toResponse(updatedBook));
     }
 
     // DELETE
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteBook(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteBook(
+            @PathVariable Long id) {
 
         bookService.deleteBook(id);
 
@@ -84,29 +99,40 @@ public class BookController {
 
     // SEARCH BY TITLE
     @GetMapping("/search/title")
-    public List<Book> searchByTitle(@RequestParam String title) {
-        return bookService.searchByTitle(title);
+    public List<BookResponse> searchByTitle(
+            @RequestParam String title) {
+
+        return bookService.searchByTitle(title)
+                .stream()
+                .map(this::toResponse)
+                .collect(Collectors.toList());
     }
 
     // SEARCH BY CATEGORY
     @GetMapping("/search/category")
-    public List<Book> searchByCategory(
+    public List<BookResponse> searchByCategory(
             @RequestParam BookCategory category) {
 
-        return bookService.searchByCategory(category);
+        return bookService.searchByCategory(category)
+                .stream()
+                .map(this::toResponse)
+                .collect(Collectors.toList());
     }
 
     // SEARCH BY AUTHOR
     @GetMapping("/search/author")
-    public List<Book> searchByAuthor(
+    public List<BookResponse> searchByAuthor(
             @RequestParam String author) {
 
-        return bookService.searchByAuthor(author);
+        return bookService.searchByAuthor(author)
+                .stream()
+                .map(this::toResponse)
+                .collect(Collectors.toList());
     }
 
     // PAGINATION AND SORTING
     @GetMapping("/page")
-    public Page<Book> getBooks(
+    public Page<BookResponse> getBooks(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "id") String sortBy,
@@ -122,6 +148,7 @@ public class BookController {
 
         Pageable pageable = PageRequest.of(page, size, sort);
 
-        return bookService.getBooks(pageable);
+        return bookService.getBooks(pageable)
+                .map(this::toResponse);
     }
 }

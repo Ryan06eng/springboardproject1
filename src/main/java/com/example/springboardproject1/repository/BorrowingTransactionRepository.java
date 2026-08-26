@@ -12,5 +12,5 @@ public interface BorrowingTransactionRepository
             Long bookId
     );
 
-    long countByBorrowerId(Long borrowerId);
+    long countByBorrowerIdAndReturnDateIsNull(Long borrowerId);
 }

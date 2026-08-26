@@ -111,7 +111,6 @@ public class BookService {
         book.setTitle(bookDetails.getTitle());
         book.setIsbn(bookDetails.getIsbn());
         book.setCategory(bookDetails.getCategory());
-        book.setAuthor(bookDetails.getAuthor());
         book.setAvailable(bookDetails.isAvailable());
 
         return bookRepository.save(book);
