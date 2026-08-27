@@ -15,17 +15,13 @@ public class BookDTO {
     @NotNull(message = "Category is required")
     private BookCategory category;
 
-    private Boolean available;
-
     public BookDTO() {
     }
 
-    public BookDTO(String title, String isbn,
-                   BookCategory category, Boolean available) {
+    public BookDTO(String title, String isbn, BookCategory category) {
         this.title = title;
         this.isbn = isbn;
         this.category = category;
-        this.available = available;
     }
 
     public String getTitle() {
@@ -50,13 +46,5 @@ public class BookDTO {
 
     public void setCategory(BookCategory category) {
         this.category = category;
-    }
-
-    public boolean isAvailable() {
-        return available;
-    }
-
-    public void setAvailable(boolean available) {
-        this.available = available;
     }
 }

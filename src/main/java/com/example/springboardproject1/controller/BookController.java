@@ -80,7 +80,6 @@ public class BookController {
         bookDetails.setTitle(bookDTO.getTitle());
         bookDetails.setIsbn(bookDTO.getIsbn());
         bookDetails.setCategory(bookDTO.getCategory());
-        bookDetails.setAvailable(bookDTO.isAvailable());
 
         Book updatedBook = bookService.updateBook(id, bookDetails);
 

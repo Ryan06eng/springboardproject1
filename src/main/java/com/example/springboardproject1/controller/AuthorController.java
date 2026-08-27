@@ -1,6 +1,7 @@
 package com.example.springboardproject1.controller;
 
 import com.example.springboardproject1.dto.AuthorDTO;
+import com.example.springboardproject1.dto.AuthorResponse;
 import com.example.springboardproject1.model.Author;
 import com.example.springboardproject1.service.AuthorService;
 import jakarta.validation.Valid;
@@ -19,36 +20,52 @@ public class AuthorController {
         this.authorService = authorService;
     }
 
+    private AuthorResponse toResponse(Author author) {
+        return new AuthorResponse(
+                author.getId(),
+                author.getName(),
+                author.getBiography()
+        );
+    }
+
     // CREATE
     @PostMapping
-    public Author createAuthor(@Valid @RequestBody AuthorDTO authorDTO) {
+    public ResponseEntity<AuthorResponse> createAuthor(
+            @Valid @RequestBody AuthorDTO authorDTO) {
 
         Author author = new Author();
 
         author.setName(authorDTO.getName());
         author.setBiography(authorDTO.getBiography());
 
-        return authorService.createAuthor(author);
+        Author createdAuthor = authorService.createAuthor(author);
+
+        return ResponseEntity.ok(toResponse(createdAuthor));
     }
 
     // READ - all authors
     @GetMapping
-    public List<Author> getAllAuthors() {
-        return authorService.getAllAuthors();
+    public List<AuthorResponse> getAllAuthors() {
+        return authorService.getAllAuthors()
+                .stream()
+                .map(this::toResponse)
+                .toList();
     }
 
     // READ - one author
     @GetMapping("/{id}")
-    public ResponseEntity<Author> getAuthorById(@PathVariable Long id) {
+    public ResponseEntity<AuthorResponse> getAuthorById(
+            @PathVariable Long id) {
 
         return authorService.getAuthorById(id)
+                .map(this::toResponse)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     // UPDATE
     @PutMapping("/{id}")
-    public ResponseEntity<Author> updateAuthor(
+    public ResponseEntity<AuthorResponse> updateAuthor(
             @PathVariable Long id,
             @Valid @RequestBody AuthorDTO authorDTO) {
 
@@ -58,9 +75,11 @@ public class AuthorController {
         authorDetails.setBiography(authorDTO.getBiography());
 
         try {
-            return ResponseEntity.ok(
-                    authorService.updateAuthor(id, authorDetails)
-            );
+            Author updatedAuthor =
+                    authorService.updateAuthor(id, authorDetails);
+
+            return ResponseEntity.ok(toResponse(updatedAuthor));
+
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
         }

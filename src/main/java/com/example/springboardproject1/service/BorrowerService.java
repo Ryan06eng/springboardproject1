@@ -38,8 +38,12 @@ public class BorrowerService {
                 .orElseThrow(() -> new RuntimeException("Borrower not found"));
 
         borrower.setName(borrowerDetails.getName());
-        borrower.setContactInformation(
-                borrowerDetails.getContactInformation()
+        borrower.setEmail(
+                borrowerDetails.getEmail()
+        );
+
+        borrower.setPhoneNumber(
+                borrowerDetails.getPhoneNumber()
         );
 
         return borrowerRepository.save(borrower);

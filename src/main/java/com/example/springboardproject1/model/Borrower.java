@@ -12,19 +12,18 @@ public class Borrower {
 
     private String name;
 
-    private String contactInformation;
+    private String email;
 
-    // Default constructor
+    private String phoneNumber;
+
     public Borrower() {
     }
 
-    // Constructor
-    public Borrower(String name, String contactInformation) {
+    public Borrower(String name, String email, String phoneNumber) {
         this.name = name;
-        this.contactInformation = contactInformation;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
     }
-
-    // Getters and Setters
 
     public Long getId() {
         return id;
@@ -42,11 +41,19 @@ public class Borrower {
         this.name = name;
     }
 
-    public String getContactInformation() {
-        return contactInformation;
+    public String getEmail() {
+        return email;
     }
 
-    public void setContactInformation(String contactInformation) {
-        this.contactInformation = contactInformation;
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 }
